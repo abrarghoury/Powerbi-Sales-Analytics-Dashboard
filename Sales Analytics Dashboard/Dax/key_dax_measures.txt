@@ -1,0 +1,47 @@
+Total Sales
+SUM(Orders[Sales])
+
+Total Orders
+DISTINCTCOUNT(Orders[Order ID])
+
+Total Profit
+SUM(Orders[Profit])
+
+Average Profit Margin
+DIVIDE([Total Profit], [Total Sales], 0)
+
+Sales LY
+CALCULATE([Total Sales], SAMEPERIODLASTYEAR(DateTable[Date]))
+
+YoY Sales Growth %
+DIVIDE([Total Sales] - [Sales LY], [Sales LY], 0)
+
+Sales LM
+CALCULATE([Total Sales], DATEADD(DateTable[Date], -1, MONTH))
+
+MoM Growth %
+DIVIDE([Total Sales] - [Sales LM], [Sales LM], 0)
+
+Rolling 3 Month Avg
+AVERAGEX(
+    DATESINPERIOD(DateTable[Date], MAX(DateTable[Date]), -3, MONTH),
+    [Total Sales]
+)
+
+Average Order Value
+DIVIDE([Total Sales], [Total Orders], 0)
+
+Orders per Customer
+CALCULATE(
+    DISTINCTCOUNT(Orders[Order ID]),
+    ALLEXCEPT(Orders, Orders[Customer ID])
+)
+
+Repeat Customers
+CALCULATE(
+    DISTINCTCOUNT(Orders[Customer ID]),
+    FILTER(
+        VALUES(Orders[Customer ID]),
+        CALCULATE(DISTINCTCOUNT(Orders[Order ID])) > 1
+    )
+)
